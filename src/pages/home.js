@@ -1,51 +1,37 @@
 import React from 'react'
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import { Input } from 'antd'
-import { throttle } from 'lodash'
-import axios from 'axios'
+// import { throttle } from 'lodash'
+import debounce from 'lodash.debounce'
+import { getResult } from "../utils/fetchData"
 
 import PlanetList from '../components/PlanetList'
 
 const { Search } = Input
 
-
-const obtainData = ( query, setResults ) => {
-  if(query === "") {
-    setResults([])
-  } else {
-    axios.get( encodeURI(`https://swapi.dev/api/planets/?search=${query}`) ).then( response => {
-      // console.log(response, "changing data...")
-      setResults([...response.data.results])
-    }).catch( error => {
-      setResults([])
-      console.error("API ERROR", error)
-    })
-  }
-}
+// const debouncedData = throttle( (q, cb) => getResult(q, cb), 400)
+const debouncedData = debounce( (q, cb) => getResult(q, cb), 400)
 
 const Home = () => {
   const [query, changeQuery] = useState("")
-  const [results, changeResults] = useState({})
+  const [results, changeResults] = useState([])
 
-  const queryHandler = ( query ) => {
-    changeQuery(query.target.value)
-    changeResults(obtainData(query.target.value, changeResults))
-  }
+  useEffect( () => {
+    debouncedData( query, changeResults )
+  }, [query])
 
-  const timedQueryHandler = useMemo(
-    () => throttle(queryHandler, 600)
-  , []);
-
-  useEffect(() => {
-    return () => {
-      timedQueryHandler.cancel();
-    }
-  }, []);
+  useEffect( () => {
+    console.log("Results set to:", results)
+  }, [results])
 
   return(
     <main>
       <nav>
-        <Search placeholder="Type to search..." onChange={timedQueryHandler} allowClear />
+        <Search 
+          placeholder="Type to search..." 
+          onChange={e => changeQuery(e.target.value)} 
+          allowClear 
+        />
       </nav>
       <section>
         { 
