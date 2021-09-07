@@ -3,8 +3,8 @@ import React from 'react'
 const Planet = ({ match }) => {
   return(
     <div>
-      <h2>Planet</h2>
-      <h3>{match.params.name}</h3>
+      <h2>Planet: {match.params.name}</h2>
+      <h2>Detail page</h2>
     </div>
   )
 }

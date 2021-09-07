@@ -1,4 +1,5 @@
 import React from 'react'
+import PlanetCard from './PlanetCard'
 
 
 const PlanetList = ({ results }) => {
@@ -16,16 +17,8 @@ const PlanetList = ({ results }) => {
       <div className="cardContainer">
         {
           results.map( (item, i) => {
-            // ToDo: Make this a separate component 
-            // ToDo: Make it a Router Link
             return(
-              <div key={i} className="card">
-                <h2>{item.name}</h2>
-                <div className="card-details">
-                  <p>{item.gravity}</p>
-                  <p>{item.created}</p>
-                </div>
-              </div>
+              <PlanetCard item={item} key={i} />
             )
           })
         }
